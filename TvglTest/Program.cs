@@ -64,7 +64,20 @@ namespace TvglTest
                 double positiveArea = positiveContact.OnSideFaces.Sum(f => f.Area) + positiveContact.OnSideContactFaces.Sum(f => f.Area);
                 SolidContactData negativeContact = contactData.NegativeSideContactData.ToList()[0];
                 double negativeArea = negativeContact.OnSideFaces.Sum(f => f.Area) + negativeContact.OnSideContactFaces.Sum(f => f.Area);
-                Console.WriteLine(string.Format("Solid Area: {0} | Neg Area: {1} | Pos Area: {2} | Diff: {3}", solids[0].SurfaceArea, positiveArea, negativeArea, positiveArea + negativeArea));
+                Console.WriteLine(string.Format("Solid Area: {0} | Neg Area: {1} | Pos Area: {2} | Diff: {3}", solids[0].SurfaceArea, positiveArea, negativeArea, solids[0].SurfaceArea - positiveArea - negativeArea));
+
+                double totalX = solids[0].Faces.Sum(f => new Component(f.Normal).XComponent * f.Area);
+                double totalY = solids[0].Faces.Sum(f => new Component(f.Normal).YComponent * f.Area);
+                double positiveX = positiveContact.OnSideFaces.Sum(f => new Component(f.Normal).XComponent * f.Area) +
+                    positiveContact.OnSideFaces.Sum(f => new Component(f.Normal).XComponent * f.Area);
+                double negativeX = negativeContact.OnSideFaces.Sum(f => new Component(f.Normal).XComponent * f.Area) +
+                    negativeContact.OnSideFaces.Sum(f => new Component(f.Normal).YComponent * f.Area);
+                double positiveY = positiveContact.OnSideFaces.Sum(f => new Component(f.Normal).YComponent * f.Area) +
+                   positiveContact.OnSideFaces.Sum(f => new Component(f.Normal).YComponent * f.Area);
+                double negativeY = negativeContact.OnSideFaces.Sum(f => new Component(f.Normal).YComponent * f.Area) +
+                    negativeContact.OnSideFaces.Sum(f => new Component(f.Normal).XComponent * f.Area);
+                Console.WriteLine(string.Format("Solid component area: Total X: {0} | Total Y: {1} | Cut Total X: {2} | Cut Total Y: {3} | diff: {4}",
+                    totalX, totalY, positiveX + negativeX, positiveY + negativeY, totalX + totalY - negativeX - positiveX - negativeY - positiveY));
                 Console.WriteLine(string.Format("Total pos: {0} | Total neg: {1}", positiveContact.AllFaces.Count, negativeContact.AllFaces.Count));
 
                 List<TessellatedSolid> positiveSolids, negativeSolids;
